@@ -1,0 +1,298 @@
+:::::::::::Kubernetes::::::::::
+
+open source and container orchestration tool 
+
+developed by google --- > CNCF 
+
+features:::::::::
+High availbility and no downtime 
+scalability and high performence 
+backup and restore 
+
+K8s ---> golang 
+
+venila --> 
+
+
+CLI --> KUBRCTL 
+
+2 -- master node and worker node 
+
+master node ---> 4 components ---->  
+worker node ---> 3 components 
+
+addons   
+
+
+ETCD:::::::::
+key and value 
+
+backup and restore ---> etcd 
+
+API server :::::::::
+
+communication 
+
+Contraol manager :::::::::::
+
+Node controller 
+replica 
+end point 
+service account and token contraller 
+
+
+worker node :::::::::::::::::::::::::
+Kubelet
+kube-proxy
+Container run-time 
+
+
+
+Pods ---> 
+
+
+dashboards 
+logging 
+DNS
+monitoring 
+
+
+
+
+Online K8 labs 
+kubernetes  playground 
+play with k8s
+play with kubernetes classroom 
+
+
+
+
+minkube ---> 
+kubeadm ---> >>>>
+
+
+pod ---> yaml and deployment 
+depoyments --> replica , 
+	rolloing ---> default ( make sure new pods comesup then only delete the old pods) and have rollback 
+	recreate ---> re-create the deployment 
+	blue-green ---> 
+	canary ---> 
+
+Service ::::: labels 
+	cluster-ip ---> with in cluster level 
+	nodeport---> outside of the cluster 
+	loadbalancer --- outside of the cluster
+
+10.9.80.98 ----> www.Nexson-devops.com (DNS ) 
+
+Ingress 
+
+Ingress controller 
+
+
+
+yaml files 
+apiVersion: 
+kind: deployment / ingres /service 
+metadata: 
+   name
+   
+   
+kubectl apply -f <filename>
+kubectl get nodes 
+kubectl get pods 
+kubectl describe pod <podname>
+kubectl logs <podname>
+
+
+:::::::Services accounts ::::::::
+
+:::::configmaps ::::
+
+
+::::::::::::::::::::::::::::Helm:::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+package manager for k8 
+
+pack of yamls calld Helm charts 
+
+strectures :
+
+mychart/
+ chart.yaml  ----- metadata info chart
+ values.yaml -----> value for the template file 
+ charts/ ----> conatins dependence charts 
+ templates/   -----> actual yaml or template files 
+ 
+:::::::::::::::::::::Ingress controller::::::::::::::::::::::::::::::::::::::::::
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx
+kubectl get services ingress-nginx-controller
+
+if no ELB and external ip is pending, use this: 
+
+kubectl patch service ingress-nginx-controller -p '{"spec": {"type": "NodePort", "externalIPs":["192.168.39.25"]}}'
+
+::::::::::::::::::::dashboard :::::::::::::::::::::::::::::::::::::::::::::::::
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+
+kubectl get all -n kubernetes-dashboard
+
+kubectl edit service/kubernetes-dashboard -n kubernetes-dashboard ---- change the type as 'NodePort'
+kubectl delete pod <pod_name> -n kubernetes-dashboard --- new pod will be craeted 
+
+use ec2 instace public key with host port from nodeport service 	
+
+kubectl create serviceaccount dashboard 
+
+kubectl get secret $(kubectl get serviceaccount dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
+
+
+
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/service-account.name: kubernetes-dashboard
+type: kubernetes.io/service-account-token
+EOF
+
+
+kubectl get secret $(kubectl get serviceaccount dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
+
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6InVIU1lLNEd6allDc0o2NFM2LVRidy1Rb3JycG5zV3FnaU5TdVR3RHNjTUUifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6Imt1YmVybmV0ZXMtZGFzaGJvYXJkIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImVmYzBkNzMzLTM1OGEtNDJkZS04YzgxLWUxNzlkMjllNDcwNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRhc2hib2FyZCJ9.tiJ1gGrDrtz1uOJjiV7-RpMR-eBqCz-Cj2q6rhcIEDjIyYRGmE98vujUCQtPa--ot-sOsB5xe3xvzm5DMNQ2BvXYG5dp4EFXSdJ4Qy_kU-124nBzf_lTtqryJpF1fodG0N_7jNEl_n0tPmEJzuJDQZb9yzfkVisc5amg4syQrwJosIcV70aauaHRnSj29YZ-IsjZrFFYdE1wFVmUP5BlCGSns6Ftnbps0-Bn-asQ1nYW71_rrryAP18c0IHdh7zdyMUsbie0-vRG-G1fBR62ZGKFcEgNPZWtCi-FApyp7hbFPjg2G9YbtSBZMOm77yjKUXgpodOK0lZA971i4iLUbA
+
+
+
+   
+   
+
+Steps to Install Prometheus:
+--------------------------------
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/prometheus
+kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext
+minikube service prometheus-server-ext
+
+
+NOTES:
+The Prometheus server can be accessed via port 80 on the following DNS name from within your cluster:
+prometheus-server.default.svc.cluster.local
+
+
+Get the Prometheus server URL by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9090
+
+
+The Prometheus alertmanager can be accessed via port 80 on the following DNS name from within your cluster:
+prometheus-alertmanager.default.svc.cluster.local
+
+
+Get the Alertmanager URL by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=alertmanager" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9093
+#################################################################################
+######   WARNING: Pod Security Policy has been moved to a global property.  #####
+######            use .Values.podSecurityPolicy.enabled with pod-based      #####
+######            annotations                                               #####
+######            (e.g. .Values.nodeExporter.podSecurityPolicy.annotations) #####
+#################################################################################
+
+
+The Prometheus PushGateway can be accessed via port 9091 on the following DNS name from within your cluster:
+prometheus-pushgateway.default.svc.cluster.local
+
+
+Get the PushGateway URL by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=pushgateway" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9091
+
+For more information on running Prometheus, visit:
+https://prometheus.io/
+
+
+
+
+
+Get the Prometheus server URL by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9090
+
+
+The Prometheus alertmanager can be accessed via port 80 on the following DNS name from within your cluster:
+prometheus-alertmanager.default.svc.cluster.local
+
+
+Get the Alertmanager URL by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=alertmanager" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9093
+#################################################################################
+######   WARNING: Pod Security Policy has been moved to a global property.  #####
+######            use .Values.podSecurityPolicy.enabled with pod-based      #####
+######            annotations                                               #####
+######            (e.g. .Values.nodeExporter.podSecurityPolicy.annotations) #####
+#################################################################################
+
+
+The Prometheus PushGateway can be accessed via port 9091 on the following DNS name from within your cluster:
+prometheus-pushgateway.default.svc.cluster.local
+
+
+Get the PushGateway URL by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=pushgateway" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9091
+
+For more information on running Prometheus, visit:
+https://prometheus.io/
+
+
+Steps to install Grafana:
+--------------------------
+
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install grafana stable/grafana
+kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext
+minikube service grafana-ext
+
+To get user name and password in Grafana:
+
+kubectl get secret --namespace default grafana -o yaml
+echo "RkpwY21aTFNXRDVJN3Z4RWFFUjlibkV1SDBDbnFBendadmc0bmROZQ==" | openssl base64 -d ; echo
+
+or 
+
+kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
